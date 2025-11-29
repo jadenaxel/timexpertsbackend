@@ -18,27 +18,4 @@ export class LdapController {
 	private async bind() {
 		await this.client.bind(LDAP_SETTINGS.USER, LDAP_SETTINGS.PASSWORD);
 	}
-
-	@Get("searchUser")
-	async searchUser(@Query() query: { username: string }) {
-		try {
-			await this.bind();
-
-			const options: SearchOptions = {
-				scope: "sub",
-				filter: `(sAMAccountName=${query.username})`,
-				attributes: ["cn", "mail", "memberOf", "sAMAccountName"]
-			};
-
-			const baseDN: string = LDAP_SETTINGS.BASE_DN;
-			const { searchEntries }: { searchEntries: any[] } = await this.client.search(baseDN, options);
-
-			await this.client.unbind();
-			return searchEntries;
-		} catch (error) {
-			console.error("Error al buscar usuario:", error);
-			await this.client.unbind();
-			throw error;
-		}
-	}
 }
