@@ -1,8 +1,10 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { LdapModule } from "./ldap/ldap.module";
-import { TypeOrmModule } from "@nestjs/typeorm";
+import { AuthModule } from "./auth/auth.module";
+import { SupervisorsModule } from './supervisors/supervisors.module';
 
 @Module({
 	imports: [
@@ -23,7 +25,9 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 			// entities: [__dirname + "/**/*.entity{.ts,.js}"]
 			autoLoadEntities: true
 		}),
-		LdapModule
+		LdapModule,
+		AuthModule,
+		SupervisorsModule
 	],
 	controllers: [],
 	providers: []

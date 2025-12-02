@@ -5,6 +5,5 @@ export const LDAP_SETTINGS: any = {
 	TIMEOUT: 5000,
 	CONNECT_TIMEOUT: 10000,
 	BASE_DN: "DC=hiredexpert,DC=local",
-	USER: "tx@hiredexpert.local",
-	PASSWORD: "Entra01@@"
+	USER: "@hiredexpert.local"
 };
