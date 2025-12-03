@@ -9,8 +9,8 @@ export class AuthController {
 	constructor(private authService: AuthService) {}
 
 	@Post("login")
-	async login(@Body() body: { employeeId: string; password: string }) {
-		const user = await this.authService.validateUser(body.employeeId, body.password);
+	async login(@Body() body: { employeeId: string; password: string; domain: string }) {
+		const user = await this.authService.validateUser(body.employeeId, body.password, body.domain);
 		if (!user) throw new UnauthorizedException();
 		return this.authService.login(user);
 	}

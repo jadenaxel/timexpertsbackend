@@ -5,20 +5,21 @@ import { Client } from "ldapts";
 
 import { AccessLevel } from "./entity/level.access.entity";
 import { LDAP_SETTINGS } from "@/config";
+import { AccessLevelEnum } from "@/types";
 
 @Injectable()
 export class LdapService implements OnModuleDestroy {
 	private client: Client;
 
-	constructor(@InjectRepository(AccessLevel) private accessLevelRepository: Repository<AccessLevel>) {
+	constructor(@InjectRepository(AccessLevel, "WF") private accessLevelRepository: Repository<AccessLevel>) {}
+
+	async connect(ldapUser: string, ldapPassword: string, domain: string) {
 		this.client = new Client({
-			url: LDAP_SETTINGS.URL,
+			url: LDAP_SETTINGS.URL(domain),
 			timeout: LDAP_SETTINGS.TIMEOUT,
 			connectTimeout: LDAP_SETTINGS.CONNECT_TIMEOUT
 		});
-	}
 
-	async connect(ldapUser: string, ldapPassword: string) {
 		return await this.client.bind(ldapUser, ldapPassword);
 	}
 
@@ -26,11 +27,10 @@ export class LdapService implements OnModuleDestroy {
 		await this.client.unbind();
 	}
 
-	async verifyUser(employeeId: string, password: string) {
-		const user: string = `${employeeId}${LDAP_SETTINGS.USER}`;
+	async verifyUser(employeeId: string, password: string, domain: string) {
+		const user: string = `${employeeId}${LDAP_SETTINGS.USER(domain)}`;
 		try {
-			await this.connect(user, password);
-
+			await this.connect(user, password, domain);
 			const accessLevel = await this.accessLevelRepository.findOne({ where: { employeeId } });
 
 			if (!accessLevel) {
@@ -38,6 +38,14 @@ export class LdapService implements OnModuleDestroy {
 				return {
 					status: false,
 					message: "User not found with access level"
+				};
+			}
+
+			if (accessLevel.accessLevel >= AccessLevelEnum.AGENT) {
+				await this.onModuleDestroy();
+				return {
+					status: false,
+					message: "You are not authorized to access this system"
 				};
 			}
 

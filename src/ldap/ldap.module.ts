@@ -5,7 +5,7 @@ import { AccessLevel } from "./entity/level.access.entity";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 @Module({
-	imports: [TypeOrmModule.forFeature([AccessLevel])],
+	imports: [TypeOrmModule.forFeature([AccessLevel], "WF")],
 	controllers: [LdapController],
 	providers: [LdapService],
 	exports: [LdapService]
