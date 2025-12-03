@@ -5,6 +5,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { LdapModule } from "./ldap/ldap.module";
 import { AuthModule } from "./auth/auth.module";
 import { SupervisorsModule } from './supervisors/supervisors.module';
+import { PeopleModule } from './people/people.module';
 
 @Module({
 	imports: [
@@ -27,7 +28,8 @@ import { SupervisorsModule } from './supervisors/supervisors.module';
 		}),
 		LdapModule,
 		AuthModule,
-		SupervisorsModule
+		SupervisorsModule,
+		PeopleModule
 	],
 	controllers: [],
 	providers: []

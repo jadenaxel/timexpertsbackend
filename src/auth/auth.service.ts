@@ -16,11 +16,15 @@ export class AuthService {
 	}
 
 	async validateUserByToken(token: string): Promise<any> {
-		const user = this.jwtService.decode(token);
-		if (!user) throw new UnauthorizedException();
-		const checkUser: any = await this.ldapService.verifyUser(user.employeeId, "");
-		if (!checkUser && !checkUser.status) throw new UnauthorizedException();
-		return user;
+		try {
+			const user = this.jwtService.verify(token);
+			if (!user) throw new UnauthorizedException();
+			const checkUser: any = await this.ldapService.verifyUser(user.username, "");
+			if (!checkUser || !checkUser.status) throw new UnauthorizedException();
+			return user;
+		} catch (error) {
+			throw new UnauthorizedException("Invalid or expired token");
+		}
 	}
 
 	async login(user: any) {
