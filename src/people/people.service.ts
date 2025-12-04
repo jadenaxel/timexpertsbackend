@@ -18,7 +18,7 @@ export class PeopleService {
 	async findOne(id: string) {
 		try {
 			const user = await this.dataSource.query("SELECT * FROM employees.view_employees_master WHERE id_user = $1", [id]);
-			const screenshots = await this.timeSource.query("SELECT * FROM screenshots_data.screenshots WHERE user_name = $1 ORDER BY timestamp DESC LIMIT 5", ["ltoribio"]);
+			const screenshots = await this.timeSource.query("SELECT * FROM screenshots_data.screenshots WHERE user_name = $1 ORDER BY timestamp DESC LIMIT 5", [id]);
 			if (!user) return new Error("User not found");
 			return { user, screenshots };
 		} catch (error) {
