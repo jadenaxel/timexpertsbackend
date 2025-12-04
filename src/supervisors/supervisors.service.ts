@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
 
@@ -13,25 +14,17 @@ export class SupervisorsService {
 		return await this.dataSource.query("SELECT id_user, name from employees.get_supervisors()");
 	}
 
-	async getAgents(employeeID: string) {
+	// async getAgents() {
+	// 	try {
+	// 		return await this.dataSource.query(`SELECT id_user, name FROM employees.get_agents_by_supervisors($1)`, [employeeID]);
+	// 	} catch (error) {
+	// 		return new Error("Your not a supervisor");
+	// 	}
+	// }
+
+	async getAgent(employeeID: string, supervisorID: any) {
 		try {
-			return await this.dataSource.query(
-				`
-                SELECT 
-                    e1.id_user,
-                    (e1.name || ' ' || e1.last_name) AS agent_name
-                FROM employees.hierarchy h
-                LEFT JOIN employees.emp_info e1 
-                    ON e1.id_emp = h.id_emp
-                LEFT JOIN employees.status_emp se
-                    ON se.id_emp = h.id_emp
-                LEFT JOIN employees.status s
-                    ON s.id_status = se.id_status
-                WHERE h.supervisor = $1
-                AND s.status = 'Active';
-            `,
-				[employeeID]
-			);
+			return await this.dataSource.query(`SELECT * FROM employees.view_employees_master WHERE id_user = $1`, [employeeID]);
 		} catch (error) {
 			return new Error("Your not a supervisor");
 		}

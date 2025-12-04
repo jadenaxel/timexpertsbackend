@@ -28,18 +28,18 @@ import { PeopleModule } from "./people/people.module";
 			autoLoadEntities: true
 		}),
 		// TypeOrmModule.forRoot({
-		// name: "WF",
-		// type: "postgres",
-		// host: process.env.WF_DB_HOST ?? "localhost",
-		// port: parseInt(process.env.WF_DB_PORT ?? "5432"),
-		// username: process.env.WF_DB_USER,
-		// password: String(process.env.WF_DB_PASSWORD),
-		// database: process.env.WF_DB_NAME,
-		// // Waning: NO CAMBIAR A true POR NINGUN CONCEPTO
-		// synchronize: false,
-		// logging: false,
-		// // entities: [__dirname + "/**/*.entity{.ts,.js}"]
-		// autoLoadEntities: true
+		// 	name: "TimeXperts",
+		// 	type: "postgres",
+		// 	host: process.env.IT_DB_HOST ?? "localhost",
+		// 	port: parseInt(process.env.IT_DB_PORT ?? "5432"),
+		// 	username: process.env.IT_DB_USER,
+		// 	password: String(process.env.IT_DB_PASSWORD),
+		// 	database: process.env.IT_DB_NAME,
+		// 	// Waning: NO CAMBIAR A true POR NINGUN CONCEPTO
+		// 	synchronize: false,
+		// 	logging: false,
+		// 	// // entities: [__dirname + "/**/*.entity{.ts,.js}"]
+		// 	autoLoadEntities: true
 		// }),
 		LdapModule,
 		AuthModule,
