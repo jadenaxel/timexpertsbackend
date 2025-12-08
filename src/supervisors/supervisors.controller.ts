@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Request } from "@nestjs/common";
+import { Controller, Get, Post, UseGuards, Request, Body } from "@nestjs/common";
 
 import { SupervisorsService } from "./supervisors.service";
 import { JwtAuthGuard } from "@/auth/jwt-auth.guard";
@@ -20,15 +20,11 @@ export class SupervisorsController {
 		return this.supervisorsService.findAll();
 	}
 
-	// @Get("/agents")
-	// getAgents(@Request() req: any) {
-	// 	return this.supervisorsService.getAgents();
-	// }
-
 	@Get("/agent/:employeeId")
 	getAgent(@Request() req: any) {
 		const token = req.headers.authorization.split("Bearer ")[1];
 		const decodedToken = this.jwtService.decode(token);
 		return this.supervisorsService.getAgent(req.params.employeeId, decodedToken);
 	}
+
 }

@@ -16,13 +16,22 @@ export class PeopleService {
 	}
 
 	async findOne(id: string) {
+		const date = new Date().toISOString().split("Z")[0];
+
 		try {
 			const user = await this.dataSource.query("SELECT * FROM employees.view_employees_master WHERE id_user = $1", [id]);
-			const screenshots = await this.timeSource.query("SELECT * FROM screenshots_data.screenshots WHERE user_name = $1 ORDER BY timestamp DESC LIMIT 5", [id]);
+			const screenshots = await this.timeSource.query("SELECT * FROM screenshots_data.screenshots WHERE user_name = $1 ORDER BY timestamp DESC LIMIT 10", [id]);
+			const getTime = await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_per_date($1,$2,$3)", [id, date, date]);
 			if (!user) return new Error("User not found");
-			return { user, screenshots };
+			return { user, screenshots, getTime };
 		} catch (error) {
 			return new Error("User not found");
 		}
+	}
+
+	async agentDate(id: string, body: any) {
+		const { from, to } = body;
+
+		return await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_per_date($1,$2,$3)", [id, from, to]);
 	}
 }

@@ -6,6 +6,7 @@ import { LdapModule } from "./ldap/ldap.module";
 import { AuthModule } from "./auth/auth.module";
 import { SupervisorsModule } from "./supervisors/supervisors.module";
 import { PeopleModule } from "./people/people.module";
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
 	imports: [
@@ -44,7 +45,8 @@ import { PeopleModule } from "./people/people.module";
 		LdapModule,
 		AuthModule,
 		SupervisorsModule,
-		PeopleModule
+		PeopleModule,
+		DashboardModule
 	],
 	controllers: [],
 	providers: []
