@@ -17,14 +17,21 @@ export class SupervisorsController {
 
 	@Get()
 	findAll() {
-		return this.supervisorsService.findAll();
+		try {
+			return this.supervisorsService.findAll();
+		} catch (error) {
+			return new Error("Unable to query the database");
+		}
 	}
 
 	@Get("/agent/:employeeId")
 	getAgent(@Request() req: any) {
-		const token = req.headers.authorization.split("Bearer ")[1];
+		const GET_TOKEN = req.headers;
+		if (!GET_TOKEN.hasOwnProperty("authorization")) return new Error("No authorization header found");
+		const token: string = GET_TOKEN.authorization.split("Bearer ")[1];
+		if (token.length <= 0) return new Error("No authorization header found");
 		const decodedToken = this.jwtService.decode(token);
+		if (!decodedToken) return new Error("No authorization header found");
 		return this.supervisorsService.getAgent(req.params.employeeId, decodedToken);
 	}
-
 }

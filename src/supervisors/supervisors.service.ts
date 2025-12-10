@@ -1,7 +1,8 @@
-import { Inject, Injectable } from "@nestjs/common";
-import { JwtService } from "@nestjs/jwt";
+import { Injectable } from "@nestjs/common";
 import { InjectDataSource } from "@nestjs/typeorm";
 import { DataSource } from "typeorm";
+
+import { GET_AGENT_QUERY, GET_SUPERVISORS_F_QUERY } from "@/Query";
 
 @Injectable()
 export class SupervisorsService {
@@ -11,22 +12,22 @@ export class SupervisorsService {
 	) {}
 
 	async findAll() {
-		return await this.dataSource.query("SELECT id_user, name from employees.get_supervisors()");
+		try {
+			const GET_SUPERVISORS_RESULT = await this.dataSource.query(GET_SUPERVISORS_F_QUERY);
+			if (GET_SUPERVISORS_RESULT.length === 0) return new Error("No supervisors found");
+			return GET_SUPERVISORS_RESULT;
+		} catch {
+			return new Error("Unable to query the database");
+		}
 	}
-
-	// async getAgents() {
-	// 	try {
-	// 		return await this.dataSource.query(`SELECT id_user, name FROM employees.get_agents_by_supervisors($1)`, [employeeID]);
-	// 	} catch (error) {
-	// 		return new Error("Your not a supervisor");
-	// 	}
-	// }
 
 	async getAgent(employeeID: string, supervisorID: any) {
 		try {
-			return await this.dataSource.query(`SELECT * FROM employees.view_employees_master WHERE id_user = $1`, [employeeID]);
-		} catch (error) {
-			return new Error("Your not a supervisor");
+			const GET_AGENT_RESULT = await this.dataSource.query(GET_AGENT_QUERY, [employeeID]);
+			if (GET_AGENT_RESULT.length === 0) return new Error("Agent could not be found");
+			return GET_AGENT_RESULT;
+		} catch {
+			return new Error("Unable to query the database");
 		}
 	}
 }

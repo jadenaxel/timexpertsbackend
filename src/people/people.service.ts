@@ -12,7 +12,11 @@ export class PeopleService {
 	) {}
 
 	async findAll() {
-		return await this.dataSource.query("SELECT * FROM employees.view_employees_master");
+		try {
+			return await this.dataSource.query("SELECT * FROM employees.view_employees_master");
+		} catch (error) {
+			return new Error("Unable to query the database");
+		}
 	}
 
 	async findOne(id: string) {
@@ -32,6 +36,10 @@ export class PeopleService {
 	async agentDate(id: string, body: any) {
 		const { from, to } = body;
 
-		return await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_per_date($1,$2,$3)", [id, from, to]);
+		try {
+			return await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_per_date($1,$2,$3)", [id, from, to]);
+		} catch (error) {
+			return new Error("Unable to query the database");
+		}
 	}
 }
