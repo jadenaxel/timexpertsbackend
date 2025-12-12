@@ -10,8 +10,15 @@ export class DashboardService {
 	) {}
 
 	async findAll() {
-		// Get the latest screenshots for users 3 users, 3 screenshots each
-		return await this.timeSource.query("SELECT * FROM screenshots_data.get_latest_screenshots_for_users(3,3)");
+		const NumberOfUsers: number = 3;
+		const NumberOfScreenshots: number = 3;
+		try {
+			const result: any = await this.timeSource.query("SELECT * FROM screenshots_data.get_latest_screenshots_for_users($1,$2)", [NumberOfUsers, NumberOfScreenshots]);
+			if (result.length <= 0) return [];
+			return result;
+		} catch (error) {
+			return new Error("Unable to query the database");
+		}
 	}
 
 	async findTime() {
@@ -19,11 +26,13 @@ export class DashboardService {
 		const today: string = new Date().toISOString().split("T")[0];
 
 		try {
-			return await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_by_user_per_date($1,$2,$3) WHERE total_seconds > 0 ORDER BY date DESC", [
+			const result: any = await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_by_user_per_date($1,$2,$3) WHERE total_seconds > 0 ORDER BY date DESC", [
 				userQuantity,
 				today,
 				today
 			]);
+			if (result.length <= 0) return [];
+			return result;
 		} catch (error) {
 			return new Error("Unable to query the database");
 		}
@@ -31,15 +40,19 @@ export class DashboardService {
 
 	async findTimeWeek() {
 		const userQuantity: number = 4;
+		const dayQuantity: number = 7;
+        
 		const today: string = new Date().toISOString();
-		const weekAgo: string = new Date(new Date().setDate(new Date().getDate() - 7)).toISOString();
+		const weekAgo: string = new Date(new Date().setDate(new Date().getDate() - dayQuantity)).toISOString();
 
 		try {
-			return await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_by_user_per_date($1,$2,$3) WHERE total_seconds > 0 ORDER BY date DESC", [
+			const result: any = await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_by_user_per_date($1,$2,$3) WHERE total_seconds > 0 ORDER BY date DESC", [
 				userQuantity,
 				weekAgo,
 				today
 			]);
+			if (result.length <= 0) return [];
+			return result;
 		} catch (error) {
 			return new Error("Unable to query the database");
 		}

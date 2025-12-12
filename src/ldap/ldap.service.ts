@@ -31,7 +31,7 @@ export class LdapService implements OnModuleDestroy {
 		const user: string = `${employeeId}${LDAP_SETTINGS.USER(domain.toLocaleLowerCase())}`;
 		try {
 			await this.connect(user, password, domain);
-			const accessLevel = await this.accessLevelRepository.findOne({ where: { employeeId } });
+			const accessLevel = await this.accessLevelRepository.findOne({ where: { userName: employeeId } });
 
 			if (!accessLevel) {
 				await this.onModuleDestroy();

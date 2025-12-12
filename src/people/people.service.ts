@@ -1,6 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import { InjectDataSource } from "@nestjs/typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+
+import { AccessLevelEnum } from "@/types";
+
+import { AccessLevel } from "../ldap/entity/level.access.entity";
 
 @Injectable()
 export class PeopleService {
@@ -8,15 +14,21 @@ export class PeopleService {
 		@InjectDataSource("WF")
 		private dataSource: DataSource,
 		@InjectDataSource("TimeXperts")
-		private timeSource: DataSource
+		private timeSource: DataSource,
+		@InjectRepository(AccessLevel, "WF") private accessLevelRepository: Repository<AccessLevel>
 	) {}
 
-	async findAll() {
+	async findAll(token: any) {
 		try {
-			const users = await this.dataSource.query("SELECT * FROM employees.get_supervisors('H000070')");
-			// return await this.dataSource.query(
-			// 	'SELECT "He-hired", department, email, floor, gender, id_user, last_name, lob, manager, supervisor, name, project, roles, status, site FROM employees.view_employees_master'
-			// );
+			// Check if the user is an admin
+			const accessLevel = await this.accessLevelRepository.findOne({ where: { userName: token.username } });
+			let users: any[];
+			console.log(accessLevel);
+			if (!accessLevel) return new Error("User not found");
+			if (accessLevel.accessLevel != AccessLevelEnum.ADMIN) users = await this.dataSource.query("SELECT * FROM employees.get_agents_by_supervisor($1)", [token.username]);
+			else users = await this.dataSource.query("SELECT * FROM employees.view_employees_master");
+
+			if (users.length <= 0) return [];
 			return users;
 		} catch (error) {
 			return new Error("Unable to query the database");
@@ -28,9 +40,11 @@ export class PeopleService {
 
 		try {
 			const user = await this.dataSource.query(`SELECT * FROM employees.view_employees_master WHERE id_user = $1`, [id]);
-			const screenshots = await this.timeSource.query("SELECT * FROM screenshots_data.screenshots WHERE user_name = $1 ORDER BY timestamp DESC LIMIT 10", [id]);
-			const getTime = await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_per_date($1,$2,$3)", [id, date, date]);
 			if (!user) return new Error("User not found");
+			let screenshots = await this.timeSource.query("SELECT * FROM screenshots_data.screenshots WHERE user_name = $1 ORDER BY timestamp DESC LIMIT 10", [id]);
+			if (!screenshots) screenshots = [];
+			let getTime = await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_per_date($1,$2,$3)", [id, date, date]);
+			if (!getTime) getTime = [];
 			return { user, screenshots, getTime };
 		} catch (error) {
 			return new Error("User not found");
@@ -41,7 +55,9 @@ export class PeopleService {
 		const { from, to } = body;
 
 		try {
-			return await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_per_date($1,$2,$3)", [id, from, to]);
+			const result: any = await this.timeSource.query("SELECT * FROM time_data.get_summarized_time_per_date($1,$2,$3)", [id, from, to]);
+			if (!result) return new Error("Unable to query the database");
+			return result;
 		} catch (error) {
 			return new Error("Unable to query the database");
 		}

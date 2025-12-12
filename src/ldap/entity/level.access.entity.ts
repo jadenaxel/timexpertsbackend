@@ -7,4 +7,10 @@ export class AccessLevel {
 
 	@Column({ name: "access_level", type: "int" })
 	accessLevel: number;
+
+	@Column({ name: "user_name", type: "varchar" })
+	userName: string;
+
+	@Column({ name: "country", type: "varchar" })
+	country: string;
 }
