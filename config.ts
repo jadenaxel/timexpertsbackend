@@ -6,7 +6,7 @@ const LDAP_SETTINGS: any = {
 			case "do":
 				return "ldap://192.168.1.7";
 			case "co":
-				return "ldap://Srvpdc00.hiredexpertscol.com";
+				return "ldap://10.216.10.9";
 			default:
 				return false;
 		}

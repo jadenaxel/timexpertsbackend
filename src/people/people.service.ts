@@ -13,9 +13,11 @@ export class PeopleService {
 
 	async findAll() {
 		try {
-			return await this.dataSource.query(
-				'SELECT "He-hired", department, email, floor, gender, id_user, last_name, lob, manager, supervisor, name, project, roles, status, site FROM employees.view_employees_master'
-			);
+			const users = await this.dataSource.query("SELECT * FROM employees.get_supervisors('H000070')");
+			// return await this.dataSource.query(
+			// 	'SELECT "He-hired", department, email, floor, gender, id_user, last_name, lob, manager, supervisor, name, project, roles, status, site FROM employees.view_employees_master'
+			// );
+			return users;
 		} catch (error) {
 			return new Error("Unable to query the database");
 		}
