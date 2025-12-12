@@ -15,7 +15,7 @@ export class LdapService implements OnModuleDestroy {
 
 	async connect(ldapUser: string, ldapPassword: string, domain: string) {
 		this.client = new Client({
-			url: LDAP_SETTINGS.URL(domain),
+			url: LDAP_SETTINGS.URL(domain.toLocaleLowerCase()),
 			timeout: LDAP_SETTINGS.TIMEOUT,
 			connectTimeout: LDAP_SETTINGS.CONNECT_TIMEOUT
 		});
@@ -28,7 +28,7 @@ export class LdapService implements OnModuleDestroy {
 	}
 
 	async verifyUser(employeeId: string, password: string, domain: string) {
-		const user: string = `${employeeId}${LDAP_SETTINGS.USER(domain)}`;
+		const user: string = `${employeeId}${LDAP_SETTINGS.USER(domain.toLocaleLowerCase())}`;
 		try {
 			await this.connect(user, password, domain);
 			const accessLevel = await this.accessLevelRepository.findOne({ where: { employeeId } });

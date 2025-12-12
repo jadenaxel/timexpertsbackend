@@ -7,6 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { SupervisorsModule } from "./supervisors/supervisors.module";
 import { PeopleModule } from "./people/people.module";
 import { DashboardModule } from "./dashboard/dashboard.module";
+import { TimesheetModule } from './timesheet/timesheet.module';
 
 @Module({
 	imports: [
@@ -46,7 +47,8 @@ import { DashboardModule } from "./dashboard/dashboard.module";
 		AuthModule,
 		SupervisorsModule,
 		PeopleModule,
-		DashboardModule
+		DashboardModule,
+		TimesheetModule
 	],
 	controllers: [],
 	providers: []

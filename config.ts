@@ -4,7 +4,7 @@ const LDAP_SETTINGS: any = {
 	URL: (domain: string) => {
 		switch (domain) {
 			case "do":
-				return "ldap://HE-AD-02.hiredexpert.local";
+				return "ldap://192.168.1.7";
 			case "co":
 				return "ldap://Srvpdc00.hiredexpertscol.com";
 			default:
